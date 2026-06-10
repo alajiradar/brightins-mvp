@@ -1,75 +1,77 @@
 import time
 
-def generate_social_posts(business_description, tone, business_goal):
+def generate_social_posts(business_description, tone, business_goal, content_length, cta_style):
     """
-    Wannan ingantaccen gurbin gwaji ne (Smart Mock Function) na Brightins.
-    Yana duba kalmomin da aka shigar don samar da hashtags da rubutu masu dacewa,
-    har da tallan Hausa na musamman don jarrabawa (Demo).
+    Ingantaccen gurbin gwaji (MVP Logic):
+    1. Yana gano Yare da kansa (Hausa ko English)
+    2. Yana canza tsawon rubutu (Short, Medium, Long)
+    3. Yana sanya nau'ikan CTA daban-daban (Soft, Strong, WhatsApp, DM)
     """
-    # Jinkirin daƙiƙa 1.5 don kwaikwayon tunanin AI
-    time.sleep(1.5)
+    time.sleep(1.5) # Kwaikwayon tunanin AI
     
-    desc = business_description.strip() if business_description.strip() else "our premium products and services"
+    desc = business_description.strip() if business_description.strip() else "our premium products"
     desc_lower = desc.lower()
     
-    # 1. DEFAULTS (Tsarin asali idan ba a gane kalmar ba)
-    hashtags = ["#BusinessGrowth", "#GlobalBrand", "#QualityService", "#Innovation"]
+    # 1. LOGIC NA LOGO YARE (Auto-Language Detection Simulation)
+    hausa_keywords = ["takalma", "saida", "kano", "turare", "yadi", "shadda", "atamfa", "kaya", "kudi", "maka", "kuna", "mun", "ina", "tsada"]
+    is_hausa = any(word in desc_lower for word in hausa_keywords)
     
-    facebook_post = (
-        f"Are you looking for the best way to elevate your lifestyle and experience true quality? "
-        f"Look no further, we’ve got exactly what you need!\n\n"
-        f"Introducing: {desc}.\n\n"
-        f"We take pride in delivering excellence tailored specifically to your satisfaction. "
-        f"Whether you are buying for personal use or looking to partner with us on a larger scale, "
-        f"we guarantee premium standards every single time.\n\n"
-        f"📥 Send us a DM or drop a comment below to get started today! 🚀"
-    )
-    
-    instagram_caption = (
-        f"Quality is not an act, it is a habit. ✨\n\n"
-        f"Discover the ultimate difference with: {desc}.\n\n"
-        f"Crafted with precision, delivered with passion, and designed to meet global standards. "
-        f"Don't settle for less when you can have the premium experience you truly deserve.\n\n"
-        f"🔗 Click the link in our bio to shop now or chat with our customer support team! 💎"
-    )
-    
-    twitter_post = (
-        f"Looking to scale up? It all starts with choosing the right quality. \n\n"
-        f"Check out: {desc} 🌍\n\n"
-        f"Engineered for excellence and trusted by customers worldwide. "
-        f"Get in touch with us today to place your order or learn more! 👇"
-    )
-
-    # 2. LOGIC NA GANO AKIN KASUWANCI (Smart Matching)
-    
-    # Tsarin Hausa: Idan an rubuta Takalma, Saida, ko Kano
-    if "takalma" in desc_lower or "saida" in desc_lower or "kano" in desc_lower or "takalmi" in desc_lower:
-        hashtags = ["#KanoBusiness", "#TakalmaMasuKyau", "#KanoMarket", "#ArewaFashion"]
-        hashtag_str = " ".join(hashtags)
-        
-        return {
-            "facebook": f"Kuna neman takalma masu inganci da ƙarko a garin Kano? Kada ku damu, mun kawo muku mafita! ✨\n\nSanarwa: {desc}.\n\nKayanmu duka masu kyau ne kuma akan farashi mai sauƙi. Yi maza ka turo mana saƙo (DM) don sayen naka yanzu! 🚀\n\n{hashtag_str}",
-            "instagram": f"Hanya mafi sauƙi ta yin ado na gari tana fara ne daga takalmin da ka saka. 👟✨\n\nZaɓi mafi kyau: {desc}.\n\nMuna tura kaya duka jihohin Najeriya daga jihar Kano. Latsa link ɗin dake bio ɗinmu don yin magana da mu. 💎\n\n{hashtag_str}",
-            "twitter": f"Ingancin takalmi shi ke ƙara wa tafiya fari. 👇\n\nDuba nan: {desc} 🌍\n\nKira mu ko turo saƙo yanzu domin oda! \n\n{hashtag_str}"
+    # 2. TSARIN CALL TO ACTION (CTA) DANGANE DA YARE
+    if is_hausa:
+        cta_dict = {
+            "Soft CTA": "Muna son jin ra'ayoyinku a sashen comment! 👇",
+            "Strong Sales CTA": "YI MAZA KA SAYI NAKA YANZU! Kaya sun kusa ƙarewa, kada a ba ka labari! 🚨",
+            "WhatsApp CTA": "Latsa nan domin yin magana da mu kai tsaye a WhatsApp: https://wa.me/2348000000000 📲",
+            "DM CTA": "Turo mana saƙon gaggawa (DM) yanzu a nan don ka mallaki naka! 📥"
         }
+        length_intro = {
+            "Short": f"Gajeren tallanmu akan: {desc}.",
+            "Medium": f"Kuna neman mafi kyau? Ga cikakken bayani akan {desc}. Muna tabbatar muku da inganci da gaskiya a kowane lokaci domin gamsuwarku.",
+            "Long": f"Barka da zuwa! Idan kuna neman inganci, ƙarko, da gamsuwa na gaskiya, wannan bayanin naku ne.\n\nAbubuwan da suka sa '{desc}' ya fita daban a kasuwa:\n1. Inganci na gaba-da-gaba (Premium Quality).\n2. Farashi mai sauƙi domin kowa.\n3. Amintaccen sabis da saurin tura kaya.\n\nKada ku sake a ba ku labari wajen neman kayan arziki."
+        }
+        hashtags = "#Kasuwanci #Kano #Inganci #Arewa"
         
-    # Idan an rubuta na Turanci
-    elif "coffee" in desc_lower:
-        hashtags = ["#PremiumCoffee", "#OrganicCoffee", "#CoffeeLovers", "#GlobalExport"]
-    elif "ginger" in desc_lower or "organic" in desc_lower or "export" in desc_lower:
-        hashtags = ["#OrganicExport", "#Agribusiness", "#GlobalTrade", "#HealthyLiving"]
-    elif "textile" in desc_lower or "shadda" in desc_lower or "yadi" in desc_lower or "fabric" in desc_lower:
-        hashtags = ["#PremiumFabrics", "#TextileIndustry", "#FashionBusiness", "#TraditionalWear"]
-    elif "turare" in desc_lower or "perfume" in desc_lower or "kamshi" in desc_lower:
-        hashtags = ["#PremiumPerfumes", "#LuxuryFragrance", "#PerfumeLovers", "#ClassySmell"]
-    elif "trading" in desc_lower or "forex" in desc_lower or "nas100" in desc_lower or "crypto" in desc_lower:
-        hashtags = ["#FinancialFreedom", "#SmartTrading", "#MarketAnalysis", "#TradingStrategy"]
+    else:
+        # Idan kuma Turanci ne
+        cta_dict = {
+            "Soft CTA": "Let us know your thoughts in the comments below! 👇",
+            "Strong Sales CTA": "BUY NOW! Limited stock available. Don't miss out on this exclusive offer! 🚨",
+            "WhatsApp CTA": "Chat with us directly on WhatsApp for instant orders: https://wa.me/2348000000000 📲",
+            "DM CTA": "Send us a Direct Message (DM) right now to place your order! 📥"
+        }
+        length_intro = {
+            "Short": f"Quick look at our premium product: {desc}.",
+            "Medium": f"Looking for the ultimate solution to elevate your lifestyle? Introducing '{desc}'. Crafted with precision and engineered to deliver top-notch results just for you.",
+            "Long": f"Welcome to the next level of excellence. If you value premium quality, long-lasting durability, and maximum satisfaction, you are in the right place.\n\nWhy choose '{desc}':\n1. Unmatched Premium Quality.\n2. Globally Trusted & Certified.\n3. Budget-Friendly & Highly Affordable.\n\nDon't compromise on your standards when you can have the very best today."
+        }
+        hashtags = "#BusinessGrowth #PremiumQuality #Innovation"
 
-    hashtag_str = " ".join(hashtags)
+    # 3. TSARA SHAFUKAN SAKAMAKO
+    fb_content = f"{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
+    ig_content = f"✨ Quality meets satisfaction. ✨\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
+    tw_content = f"{length_intro['Short'] if content_length == 'Long' else length_intro[content_length]}\n\n{cta_dict[cta_style]} {hashtags}"
     
-    # Mayar da sakamakon Turanci tare da hashtags ɗinsu
+    # TikTok/Shorts Video Script
+    if is_hausa:
+        tt_content = (
+            f"🎥 [TikTok/Shorts Script - Daƙiƙa 60]\n"
+            f"Yanayi: {tone} | Burin Bidiyo: {business_goal}\n\n"
+            f"[0-15s - HOOK]: (Fito da fara'a da kuzari) 'Tsaya ka saurara! Idan kana son bunkasa dabarunka ko kasuwancinka a Intanet, wannan bidiyon naka ne!'\n\n"
+            f"[15-45s - BODY]: 'Ga {desc} wanda kowa ke magana akai a gari. Yana da sauƙi, yana da inganci, kuma yana magance muku matsala farat ɗaya.'\n\n"
+            f"[45-60s - CTA]: '{cta_dict[cta_style]}'"
+        )
+    else:
+        tt_content = (
+            f"🎥 [TikTok/Shorts Script - 60 Seconds]\n"
+            f"Tone: {tone} | Video Goal: {business_goal}\n\n"
+            f"[0-15s - HOOK]: (Look directly at the camera with energy) 'Stop scrolling if you want to elevate your life or business today!'\n\n"
+            f"[15-45s - BODY]: 'Here is why everyone is obsessed with {desc}. It is simple, highly effective, and built just for you.'\n\n"
+            f"[45-60s - CTA]: '{cta_dict[cta_style]}'"
+        )
+
     return {
-        "facebook": f"{facebook_post}\n\n{hashtag_str}",
-        "instagram": f"{instagram_caption}\n\n{hashtag_str}",
-        "twitter": f"{twitter_post}\n\n{hashtag_str}"
+        "facebook": fb_content,
+        "instagram": ig_content,
+        "twitter": tw_content,
+        "tiktok": tt_content
     }
