@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import time
 
 # 1. PAGE INITIALIZATION & CONFIG
@@ -72,7 +73,7 @@ st.markdown("""
     }
 
     /* Badges & Tips */
-    .badge-lang {
+    .badge-hausa {
         background-color: #DCFCE7; color: #15803D; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; float: right;
     }
     .tip-box {
@@ -88,6 +89,9 @@ st.markdown("""
     }
     .card-title {
         font-weight: 600; font-size: 14px; color: #111827; display: flex; align-items: center; gap: 8px;
+    }
+    .card-body-text {
+        font-size: 14px; color: #374151; white-space: pre-wrap; line-height: 1.5; background-color: #FAFAFA; padding: 12px; border-radius: 6px; border: 1px solid #F3F4F6;
     }
     
     /* Footer Status */
@@ -129,40 +133,30 @@ col_input, col_output = st.columns([1, 1.3], gap="large")
 # --- LOCAL AI SIMULATOR FOR MOCKUP ---
 def generate_posts_mockup(desc, tone, goal):
     time.sleep(1.0)
-    # Default fallback string if text is empty
-    input_text = desc if desc.strip() else "premium coffee blends"
-    
-    hausa_keywords = ["takalma", "saida", "kano", "turare", "yadi", "shadda", "kaya", "kudi", "ina"]
-    is_hausa = any(w in input_text.lower() for w in hausa_keywords)
+    hausa_keywords = ["takalma", "saida", "kano", "turare", "yadi", "shadda", "kaya", "kudi"]
+    is_hausa = any(w in desc.lower() for w in hausa_keywords)
     
     if is_hausa:
         return {
             "lang": "Hausa",
-            "fb": f"Nuna kanka da kamshi mai ɗaukar hankali! ✨\n\nMuna da tarin sababbin samfura masu inganci na musamman da suka fito daga garin saunƙar kasuwanci.\n\nZiyarci shagonmu ko tuntube mu yanzu domin mallakar naku! 💎\n\n#Kasuwanci #Kano #Inganci #Tone_{tone}",
-            "ig": f"Kamshi yana magana kafin ka faɗi komai. 🌸\n\nSabbin samfuranmu sun isa domin ba ku gamsuwa ta gari kowane lokaci.\n\nKada ku bari a ba ku labari! 📥 Turo saƙo yanzu.\n\n#Luxury #Kano #BrandGoal_{goal}",
-            "x": f"Inganci da dacewa duka a wuri guda! 🚀\n\nMallaki ingantaccen samfuri dake yanka tasiri a kasuwa yanzu.\n\nTuntube mu a yau! 🔥 #BrightinsAI #Arewa"
+            "fb": f"Nuna kanka da kamshi mai ɗaukar hankali! ✨\n\nMuna da tarin sababbin {desc} masu ƙamshi na musamman da suka fito daga garin saunƙar kasuwanci.\n\nZiyarci shagonmu ko tuntube mu yanzu domin mallakar naku! 💎\n\n#Kasuwanci #Kano #Inganci #Tone_{tone}",
+            "ig": f"Kamshi yana magana kafin ka faɗi komai. 🌸\n\nSabbin samfuranmu na {desc} sun isa domin ba ku gamsuwa ta gari kowane lokaci.\n\nKada ku bari a ba ku labari! 📥 Turo saƙo yanzu.\n\n#Luxury #Kano #BrandGoal_{goal}",
+            "x": f"Inganci da dacewa duka a wuri guda! 🚀\n\nMallaki ingantaccen {desc} dake yanka tasiri a kasuwa yanzu.\n\nTuntube mu a yau! 🔥 #BrightinsAI #Arewa"
         }
     else:
         return {
             "lang": "English",
-            "fb": f"Elevate your lifestyle with premium quality! 🚀\n\nDiscover our newly launched updates on '{input_text}' tailored specially for your satisfaction and luxury taste.\n\nClick the link or send a DM to order today! ✨\n\n#BusinessGrowth #PremiumQuality #Tone_{tone}",
-            "ig": f"Quality meets absolute excellence. ✨\n\nHere is why everyone is talking about '{input_text}'. It is engineered to give you the perfect result you deserve.\n\nGet yours now! 📥 #Luxury #Innovation #Goal_{goal}",
-            "x": f"Looking for the ultimate experience? Look no further! 💎\n\nIntroducing our top-tier '{input_text}' built for durability and success. #Brightins"
+            "fb": f"Elevate your lifestyle with premium quality! 🚀\n\nDiscover our newly launched updates on '{desc}' tailored specially for your satisfaction and luxury taste.\n\nClick the link or send a DM to order today! ✨\n\n#BusinessGrowth #PremiumQuality #Tone_{tone}",
+            "ig": f"Quality meets absolute excellence. ✨\n\nHere is why everyone is talking about '{desc}'. It is engineered to give you the perfect result you deserve.\n\nGet yours now! 📥 #Luxury #Innovation #Goal_{goal}",
+            "x": f"Looking for the ultimate experience? Look no further! 💎\n\nIntroducing our top-tier '{desc}' built for durability and success. #Brightins"
         }
 
 # 5. LEFT COLUMN: INPUT PANEL
 with col_input:
     st.markdown('<div class="section-title">1. Describe Your Business</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-desc">Tell us about your business or product</div>', unsafe_allow_html=True)
-    
-    # Global approach: Empty input field with a clear English Placeholder
-    biz_description = st.text_area(
-        "Biz Desc", 
-        value="", 
-        placeholder="e.g., We sell premium organic coffee blends online to customers worldwide...", 
-        height=110, 
-        label_visibility="collapsed"
-    )
+    biz_description = st.text_area("Biz Desc", value="Ina sayar da turare masu kamshi a Kano.", height=110, label_visibility="collapsed")
+    st.markdown(f"<p style='text-align:right; font-size:12px; color:#9CA3AF; margin-top:-10px;'>{len(biz_description)}/500</p>", unsafe_allow_html=True)
     
     st.markdown('<div class="section-title">2. Choose Tone</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-desc">Select the tone you want</div>', unsafe_allow_html=True)
@@ -174,73 +168,52 @@ with col_input:
     
     # Auto Language Badge UI Simulated
     st.markdown('<br><span class="section-title">Language</span>'
-                '<span class="badge-lang">Auto-Detect</span>', unsafe_allow_html=True)
+                '<span class="badge-hausa">Auto-Detected</span>', unsafe_allow_html=True)
     st.write("")
     
     generate_click = st.button("✨ Generate Marketing Content", use_container_width=True)
     
-    # Tip Box
+    # Tip Box from the bottom of mockup input column
     st.markdown("""
         <div class="tip-box">
             💡 <b>Tip: Write in any language.</b> Brightins will detect the language and generate content in the same language.
         </div>
     """, unsafe_allow_html=True)
 
-# 6. RIGHT COLUMN: OUTPUT PANEL (STACKED CARDS STYLE WITH COPY & DOWNLOAD)
+# 6. RIGHT COLUMN: OUTPUT PANEL (STACKED CARDS STYLE)
 with col_output:
     st.markdown('<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">'
                 '<span style="font-size: 18px; font-weight: 700; color: #111827;">✨ Your Generated Content</span>'
                 '</div>', unsafe_allow_html=True)
     st.markdown('<p style="font-size: 13px; color: #6B7280; margin-top: -5px; margin-bottom: 1.5rem;">AI-generated content tailored for your business</p>', unsafe_allow_html=True)
     
-    # Trigger the simulation if clicked
+    # Set standard context inputs if not triggered yet
     if generate_click:
         with st.spinner("Brightins AI Engine is writing..."):
             res = generate_posts_mockup(biz_description, selected_tone, selected_goal)
             st.session_state['mock_res'] = res
             st.session_state['mock_ready'] = True
     
-    # Display outputs if ready
+    # Default display or generated output
     if st.session_state.get('mock_ready', False):
         res_data = st.session_state['mock_res']
         
         # --- CARD 1: FACEBOOK ---
         st.markdown('<div class="result-card"><div class="card-header"><div class="card-title">📘 Facebook Post</div></div>', unsafe_allow_html=True)
         st.text_area("FB Txt", res_data["fb"], height=120, label_visibility="collapsed", key="fb_area")
-        
-        # Action Buttons side-by-side
-        btn_fb_1, btn_fb_2 = st.columns(2)
-        with btn_fb_1:
-            if st.button("📋 Copy Post", key="cp_fb", use_container_width=True):
-                st.toast("Copied to clipboard! 📋")
-        with btn_fb_2:
-            st.download_button(label="📥 Download Post", data=res_data["fb"], file_name="facebook_post.txt", mime="text/plain", use_container_width=True, key="dl_fb")
+        st.download_button(label="📥 Download Facebook Post", data=res_data["fb"], file_name="facebook_post.txt", mime="text/plain", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
         
         # --- CARD 2: INSTAGRAM ---
         st.markdown('<div class="result-card"><div class="card-header"><div class="card-title">📸 Instagram Caption</div></div>', unsafe_allow_html=True)
         st.text_area("IG Txt", res_data["ig"], height=120, label_visibility="collapsed", key="ig_area")
-        
-        # Action Buttons side-by-side
-        btn_ig_1, btn_ig_2 = st.columns(2)
-        with btn_ig_1:
-            if st.button("📋 Copy Caption", key="cp_ig", use_container_width=True):
-                st.toast("Copied to clipboard! 📋")
-        with btn_ig_2:
-            st.download_button(label="📥 Download Caption", data=res_data["ig"], file_name="instagram_caption.txt", mime="text/plain", use_container_width=True, key="dl_ig")
+        st.download_button(label="📥 Download Instagram Caption", data=res_data["ig"], file_name="instagram_caption.txt", mime="text/plain", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
         
         # --- CARD 3: X (TWITTER) ---
         st.markdown('<div class="result-card"><div class="card-header"><div class="card-title">𝕏 X (Twitter) Post</div></div>', unsafe_allow_html=True)
         st.text_area("X Txt", res_data["x"], height=90, label_visibility="collapsed", key="x_area")
-        
-        # Action Buttons side-by-side
-        btn_x_1, btn_x_2 = st.columns(2)
-        with btn_x_1:
-            if st.button("📋 Copy Post", key="cp_x", use_container_width=True):
-                st.toast("Copied to clipboard! 📋")
-        with btn_x_2:
-            st.download_button(label="📥 Download Post", data=res_data["x"], file_name="x_post.txt", mime="text/plain", use_container_width=True, key="dl_x")
+        st.download_button(label="📥 Download X Post", data=res_data["x"], file_name="x_post.txt", mime="text/plain", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
         
         # --- BOTTOM STATUS BAR ---
