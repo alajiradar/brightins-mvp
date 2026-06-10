@@ -2,21 +2,39 @@ import streamlit as st
 import streamlit.components.v1 as components
 import time
 
-# 1. SET PAGE CONFIGURATION
-st.set_page_config(page_title="Brightins MVP", page_icon="🚀", layout="wide")
+# 1. SET PAGE CONFIGURATION (Changes Browser Tab Title to Brightins)
+st.set_page_config(page_title="Brightins", page_icon="🚀", layout="wide")
 
-# 2. FREE LOCAL AI SIMULATOR ENGINE (No OpenAI Key Required)
+# 2. INJECT WEB APP META TAGS (Forces Mobile Browsers to recognize it as "Brightins")
+st.markdown("""
+    <head>
+        <title>Brightins</title>
+        <meta name="apple-mobile-web-app-title" content="Brightins">
+        <meta name="application-name" content="Brightins">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="theme-color" content="#7f56da">
+    </head>
+""", unsafe_allow_html=True)
+
+# Hide Streamlit Default Menu and Footer for pure branding experience
+hide_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_style, unsafe_allow_html=True)
+
+# 3. FREE LOCAL AI SIMULATOR ENGINE (Smart Simulation)
 def generate_social_posts_local(business_description, tone, business_goal, content_length, cta_style):
-    """
-    Brightins Free Local AI Simulator 
-    Runs 100% offline and free without OpenAI API Key.
-    """
-    time.sleep(1.5) # Fake AI processing delay for realistic feel
+    time.sleep(1.2) # Realism delay
     
     desc = business_description.strip() if business_description.strip() else "our premium products"
     desc_lower = desc.lower()
     
-    # Auto-detect Hausa keywords from description
+    # Simple Auto-detect Hausa
     hausa_keywords = ["takalma", "saida", "kano", "turare", "yadi", "shadda", "atamfa", "kaya", "kudi", "maka", "kuna", "mun", "ina", "tsada", "bunkasa", "kasuwanci"]
     is_hausa = any(word in desc_lower for word in hausa_keywords)
     
@@ -37,7 +55,7 @@ def generate_social_posts_local(business_description, tone, business_goal, conte
         fb = f"🚀 [Brightins AI Engine - Tone: {tone}]\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
         ig = f"✨ Kasuwancinmu na gari (Goal: {business_goal}) ✨\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
         tw = f"{length_intro['Short'] if content_length == 'Long' else length_intro[content_length]}\n\n{cta_dict[cta_style]} {hashtags}"
-        tt = f"🎥 [TikTok/Shorts Script - Daƙiƙa 60]\nTone: {tone}\n\n[0-15s - HOOK]: (Fito da fara'a da kuzari) 'Tsaya ka saurara! Idan kana son bunkasa kasuwancinka a Intanet, wannan bidiyon naka ne!'\n\n[15-45s - BODY]: 'Ga babban dalilin da ya sa kowa ke magana akan {desc}. Yana da sauƙi da inganci.'\n\n[45-60s - CTA]: '{cta_dict[cta_style]}'"
+        tt = f"🎥 [TikTok/Shorts Script - Daƙiƙa 60]\nTone: {tone}\n\n[0-15s - HOOK]: 'Tsaya ka saurara! Idan kana son bunkasa kasuwancinka a Intanet, wannan bidiyon naka ne!'\n\n[15-45s - BODY]: 'Ga babban dalilin da ya sa kowa ke magana akan {desc}. Yana da sauƙi da inganci.'\n\n[45-60s - CTA]: '{cta_dict[cta_style]}'"
     
     else:
         cta_dict = {
@@ -56,11 +74,11 @@ def generate_social_posts_local(business_description, tone, business_goal, conte
         fb = f"🚀 [Brightins AI Generated Post]\nTone: {tone} | Goal: {business_goal}\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
         ig = f"✨ Quality meets excellence. ✨\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
         tw = f"{length_intro['Short'] if content_length == 'Long' else length_intro[content_length]}\n\n{cta_dict[cta_style]} {hashtags}"
-        tt = f"🎥 [TikTok/Shorts Script - 60 Seconds]\nTone: {tone}\n\n[0-15s - HOOK]: (Look directly at the camera with energy) 'Stop scrolling if you want to elevate your business today!'\n\n[15-45s - BODY]: 'Here is why everyone is talking about {desc}. It is simple, effective, and designed just for you.'\n\n[45-60s - CTA]: '{cta_dict[cta_style]}'"
+        tt = f"🎥 [TikTok/Shorts Script - 60 Seconds]\nTone: {tone}\n\n[0-15s - HOOK]: 'Stop scrolling if you want to elevate your business today!'\n\n[15-45s - BODY]: 'Here is why everyone is talking about {desc}. It is simple, effective, and designed just for you.'\n\n[45-60s - CTA]: '{cta_dict[cta_style]}'"
 
     return {"facebook": fb, "instagram": ig, "twitter": tw, "tiktok": tt}
 
-# 3. STREAMLIT UI LAYOUT (Clean English Interface)
+# 4. STREAMLIT UI LAYOUT
 st.title("Brightins 🚀")
 st.subheader("Your Global AI Marketing Employee")
 st.write("---")
@@ -69,15 +87,15 @@ col1, col2 = st.columns([1, 1.2])
 
 with col1:
     st.markdown("### 1. Describe Your Business")
-    st.caption("Tell us about your business or product")
+    st.caption("Tell us about your business, products or services")
     business_description = st.text_area(
         "Business Description",
-        placeholder="e.g., We sell premium organic coffee blends online to customers worldwide...",
+        placeholder="e.g., Muna siyar da daddadan turaren wuta da na jiki mai dorewa daga garin Kano...",
         label_visibility="collapsed"
     )
     
     st.markdown("### 2. Choose Tone")
-    st.caption("Select the tone you want")
+    st.caption("Select the emotional tone for your marketing copy")
     tone = st.selectbox(
         "Tone", 
         ["Professional", "Aggressive Sales", "Friendly", "Humorous", "Luxury"],
@@ -85,7 +103,7 @@ with col1:
     )
     
     st.markdown("### 3. Business Goal")
-    st.caption("What do you want to achieve?")
+    st.caption("What is the main objective of this content?")
     business_goal = st.selectbox(
         "Goal", 
         ["Increase Sales", "Brand Awareness", "Get Leads"],
@@ -93,7 +111,7 @@ with col1:
     )
     
     st.markdown("### 4. Content Length")
-    st.caption("Select the length of your post")
+    st.caption("Select how long the text should be")
     content_length = st.selectbox(
         "Length", 
         ["Short", "Medium", "Long"],
@@ -101,7 +119,7 @@ with col1:
     )
     
     st.markdown("### 5. Call-To-Action Style")
-    st.caption("Select your preferred CTA style")
+    st.caption("How should customers reach out to you?")
     cta_style = st.selectbox(
         "CTA", 
         ["Soft CTA", "Strong Sales CTA", "WhatsApp CTA", "DM CTA"],
@@ -118,8 +136,7 @@ with col2:
         if not business_description.strip():
             st.error("Please enter your business description first!")
         else:
-            with st.spinner("Brightins AI is thinking... Please wait..."):
-                # Call the local simulator directly (Bulletproof & Free)
+            with st.spinner("Brightins AI Engine is analyzing..."):
                 posts = generate_social_posts_local(business_description, tone, business_goal, content_length, cta_style)
                 st.session_state['brightins_posts'] = posts
                 st.session_state['data_ready'] = True
@@ -134,35 +151,66 @@ with col2:
             components.html(f"""
                 <textarea id="fb_text" style="display:none;">{posts["facebook"]}</textarea>
                 <button onclick="var text = document.getElementById('fb_text').value; navigator.clipboard.writeText(text); alert('🚀 Facebook Post Copied!')" style="
-                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;
                 ">📋 Copy Facebook Post</button>
-            """, height=55)
+            """, height=50)
+            st.download_button(
+                label="📥 Download Facebook Post",
+                data=posts["facebook"],
+                file_name="brightins_facebook.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
             
         with tab2:
             st.text_area("Instagram Content", posts["instagram"], height=200, label_visibility="collapsed")
             components.html(f"""
                 <textarea id="ig_text" style="display:none;">{posts["instagram"]}</textarea>
                 <button onclick="var text = document.getElementById('ig_text').value; navigator.clipboard.writeText(text); alert('📸 Instagram Caption Copied!')" style="
-                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;
                 ">📋 Copy Instagram Caption</button>
-            """, height=55)
+            """, height=50)
+            st.download_button(
+                label="📥 Download Instagram Caption",
+                data=posts["instagram"],
+                file_name="brightins_instagram.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
             
         with tab3:
             st.text_area("X Content", posts["twitter"], height=150, label_visibility="collapsed")
             components.html(f"""
                 <textarea id="x_text" style="display:none;">{posts["twitter"]}</textarea>
                 <button onclick="var text = document.getElementById('x_text').value; navigator.clipboard.writeText(text); alert('𝕏 X Post Copied!')" style="
-                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;
                 ">📋 Copy X Post</button>
-            """, height=55)
+            """, height=50)
+            st.download_button(
+                label="📥 Download X Post",
+                data=posts["twitter"],
+                file_name="brightins_x_post.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
             
         with tab4:
             st.text_area("TikTok Content", posts["tiktok"], height=220, label_visibility="collapsed")
             components.html(f"""
                 <textarea id="tt_text" style="display:none;">{posts["tiktok"]}</textarea>
                 <button onclick="var text = document.getElementById('tt_text').value; navigator.clipboard.writeText(text); alert('🎥 Video Script Copied!')" style="
-                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;
                 ">📋 Copy Video Script</button>
-            """, height=55)
+            """, height=50)
+            st.download_button(
+                label="📥 Download TikTok Script",
+                data=posts["tiktok"],
+                file_name="brightins_tiktok_script.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
     else:
         st.write("Your multi-platform marketing content will appear here after you hit the generate button.")
+
+# --- FOOTER SECTION ---
+st.markdown("<br><br><hr><p style='text-align: center; color: gray; font-size: 14px;'>© 2026 Brightins AI Enterprise. All Rights Reserved.</p>", unsafe_allow_html=True)
