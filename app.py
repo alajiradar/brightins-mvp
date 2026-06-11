@@ -27,8 +27,8 @@ hide_style = """
 """
 st.markdown(hide_style, unsafe_allow_html=True)
 
-# 3. FREE LOCAL AI SIMULATOR ENGINE (Smart Simulation)
-def generate_social_posts_local(business_description, tone, business_goal, content_length, cta_style):
+# 3. FREE LOCAL AI SIMULATOR ENGINE (Smart Simulation without Length & CTA parameters)
+def generate_social_posts_local(business_description, tone, business_goal):
     time.sleep(1.2) # Realism delay
     
     desc = business_description.strip() if business_description.strip() else "our premium products"
@@ -39,42 +39,24 @@ def generate_social_posts_local(business_description, tone, business_goal, conte
     is_hausa = any(word in desc_lower for word in hausa_keywords)
     
     if is_hausa:
-        cta_dict = {
-            "Soft CTA": "Muna son jin ra'ayoyinku a sashen comment! 👇",
-            "Strong Sales CTA": "YI MAZA KA SAYI NAKA YANZU! Kaya sun kusa ƙarewa, kada a ba ka labari! 🚨",
-            "WhatsApp CTA": "Latsa nan domin yin magana da mu kai tsaye a WhatsApp: https://wa.me/2348000000000 📲",
-            "DM CTA": "Turo mana saƙon gaggawa (DM) yanzu a nan don ka mallaki naka! 📥"
-        }
-        length_intro = {
-            "Short": f"Gajeren tallanmu akan: {desc}.",
-            "Medium": f"Kuna neman mafi kyau? Ga cikakken bayani akan {desc}. Muna tabbatar muku da inganci da gaskiya a kowane lokaci domin gamsuwarku.",
-            "Long": f"Barka da zuwa! Idan kuna neman inganci, ƙarko, da gamsuwa na gaskiya, wannan bayanin naku ne.\n\nAbubuwan da suka sa '{desc}' ya fita daban a kasuwa:\n1. Inganci na gaba-da-gaba (Premium Quality).\n2. Farashi mai sauƙi domin kowa.\n3. Amintaccen sabis da saurin tura kaya.\n\nKada ku sake a ba ku labari wajen neman kayan arziki."
-        }
+        cta_text = "Turo mana saƙon gaggawa (DM) yanzu a nan don ka mallaki naka! 📥"
+        body_text = f"Kuna neman mafi kyau? Ga cikakken bayani akan {desc}. Muna tabbatar muku da inganci da gaskiya a kowane lokaci domin gamsuwarku."
         hashtags = "#Kasuwanci #Kano #Inganci #Arewa"
         
-        fb = f"🚀 [Brightins AI Engine - Tone: {tone}]\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
-        ig = f"✨ Kasuwancinmu na gari (Goal: {business_goal}) ✨\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
-        tw = f"{length_intro['Short'] if content_length == 'Long' else length_intro[content_length]}\n\n{cta_dict[cta_style]} {hashtags}"
-        tt = f"🎥 [TikTok/Shorts Script - Daƙiƙa 60]\nTone: {tone}\n\n[0-15s - HOOK]: 'Tsaya ka saurara! Idan kana son bunkasa kasuwancinka a Intanet, wannan bidiyon naka ne!'\n\n[15-45s - BODY]: 'Ga babban dalilin da ya sa kowa ke magana akan {desc}. Yana da sauƙi da inganci.'\n\n[45-60s - CTA]: '{cta_dict[cta_style]}'"
+        fb = f"🚀 [Brightins AI Engine - Tone: {tone}]\n\n{body_text}\n\n{cta_text}\n\n{hashtags}"
+        ig = f"✨ Kasuwancinmu na gari (Goal: {business_goal}) ✨\n\n{body_text}\n\n{cta_text}\n\n{hashtags}"
+        tw = f"{body_text}\n\n{cta_text} {hashtags}"
+        tt = f"🎥 [TikTok/Shorts Script - Daƙiƙa 60]\nTone: {tone}\n\n[0-15s - HOOK]: 'Tsaya ka saurara! Idan kana son bunkasa kasuwancinka a Intanet, wannan bidiyon naka ne!'\n\n[15-45s - BODY]: 'Ga babban dalilin da ya sa kowa ke magana akan {desc}. Yana da sauƙi da inganci.'\n\n[45-60s - CTA]: '{cta_text}'"
     
     else:
-        cta_dict = {
-            "Soft CTA": "Let us know your thoughts in the comments below! 👇",
-            "Strong Sales CTA": "BUY NOW! Limited stock available. Don't miss out on this exclusive offer! 🚨",
-            "WhatsApp CTA": "Chat with us directly on WhatsApp for instant orders: https://wa.me/2348000000000 📲",
-            "DM CTA": "Send us a Direct Message (DM) right now to place your order! 📥"
-        }
-        length_intro = {
-            "Short": f"Quick look at our premium product: {desc}.",
-            "Medium": f"Looking for the ultimate solution to elevate your lifestyle? Introducing '{desc}'. Crafted with precision and engineered to deliver top-notch results just for you.",
-            "Long": f"Welcome to the next level of excellence. If you value premium quality, long-lasting durability, and maximum satisfaction, you are in the right place.\n\nWhy choose '{desc}':\n1. Unmatched Premium Quality.\n2. Globally Trusted & Certified.\n3. Budget-Friendly & Highly Affordable.\n\nDon't compromise on your standards when you can have the very best today."
-        }
+        cta_text = "Send us a Direct Message (DM) right now to place your order! 📥"
+        body_text = f"Looking for the ultimate solution to elevate your lifestyle? Introducing '{desc}'. Crafted with precision and engineered to deliver top-notch results just for you."
         hashtags = "#BusinessGrowth #PremiumQuality #Innovation"
         
-        fb = f"🚀 [Brightins AI Generated Post]\nTone: {tone} | Goal: {business_goal}\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
-        ig = f"✨ Quality meets excellence. ✨\n\n{length_intro[content_length]}\n\n{cta_dict[cta_style]}\n\n{hashtags}"
-        tw = f"{length_intro['Short'] if content_length == 'Long' else length_intro[content_length]}\n\n{cta_dict[cta_style]} {hashtags}"
-        tt = f"🎥 [TikTok/Shorts Script - 60 Seconds]\nTone: {tone}\n\n[0-15s - HOOK]: 'Stop scrolling if you want to elevate your business today!'\n\n[15-45s - BODY]: 'Here is why everyone is talking about {desc}. It is simple, effective, and designed just for you.'\n\n[45-60s - CTA]: '{cta_dict[cta_style]}'"
+        fb = f"🚀 [Brightins AI Generated Post]\nTone: {tone} | Goal: {business_goal}\n\n{body_text}\n\n{cta_text}\n\n{hashtags}"
+        ig = f"✨ Quality meets excellence. ✨\n\n{body_text}\n\n{cta_text}\n\n{hashtags}"
+        tw = f"{body_text}\n\n{cta_text} {hashtags}"
+        tt = f"🎥 [TikTok/Shorts Script - 60 Seconds]\nTone: {tone}\n\n[0-15s - HOOK]: 'Stop scrolling if you want to elevate your business today!'\n\n[15-45s - BODY]: 'Here is why everyone is talking about {desc}. It is simple, effective, and designed just for you.'\n\n[45-60s - CTA]: '{cta_text}'"
 
     return {"facebook": fb, "instagram": ig, "twitter": tw, "tiktok": tt}
 
@@ -90,7 +72,8 @@ with col1:
     st.caption("Tell us about your business, products or services")
     business_description = st.text_area(
         "Business Description",
-        placeholder="e.g., Muna siyar da daddadan turaren wuta da na jiki mai dorewa daga garin Kano...",
+        value="",
+        placeholder="e.g., We sell premium organic coffee blends online to customers worldwide...",
         label_visibility="collapsed"
     )
     
@@ -110,22 +93,6 @@ with col1:
         label_visibility="collapsed"
     )
     
-    st.markdown("### 4. Content Length")
-    st.caption("Select how long the text should be")
-    content_length = st.selectbox(
-        "Length", 
-        ["Short", "Medium", "Long"],
-        label_visibility="collapsed"
-    )
-    
-    st.markdown("### 5. Call-To-Action Style")
-    st.caption("How should customers reach out to you?")
-    cta_style = st.selectbox(
-        "CTA", 
-        ["Soft CTA", "Strong Sales CTA", "WhatsApp CTA", "DM CTA"],
-        label_visibility="collapsed"
-    )
-    
     st.write("")
     generate_button = st.button("🚀 Generate Marketing Content", use_container_width=True)
 
@@ -137,7 +104,7 @@ with col2:
             st.error("Please enter your business description first!")
         else:
             with st.spinner("Brightins AI Engine is analyzing..."):
-                posts = generate_social_posts_local(business_description, tone, business_goal, content_length, cta_style)
+                posts = generate_social_posts_local(business_description, tone, business_goal)
                 st.session_state['brightins_posts'] = posts
                 st.session_state['data_ready'] = True
 
