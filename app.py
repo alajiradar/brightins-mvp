@@ -2,10 +2,10 @@ import streamlit as st
 import streamlit.components.v1 as components
 import time
 
-# 1. SET PAGE CONFIGURATION (Changes Browser Tab Title to Brightins)
+# ── 1. PAGE CONFIGURATION ─────────────────────────────────────────────────────
 st.set_page_config(page_title="Brightins", page_icon="🚀", layout="wide")
 
-# 2. INJECT WEB APP META TAGS (Forces Mobile Browsers to recognize it as "Brightins")
+# ── 2. WEB APP META TAGS ──────────────────────────────────────────────────────
 st.markdown("""
     <head>
         <title>Brightins</title>
@@ -17,54 +17,287 @@ st.markdown("""
     </head>
 """, unsafe_allow_html=True)
 
-# Hide Streamlit Default Menu and Footer for pure branding experience
-hide_style = """
+# ── 3. HIDE STREAMLIT DEFAULT CHROME ─────────────────────────────────────────
+st.markdown("""
     <style>
     #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    footer     {visibility: hidden;}
+    header     {visibility: hidden;}
     </style>
-"""
-st.markdown(hide_style, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# 3. FREE LOCAL AI SIMULATOR ENGINE (Smart Simulation without Length & CTA parameters)
+
+# ── 4. THEME DEFINITIONS ──────────────────────────────────────────────────────
+THEMES = {
+    "🌞 Light": {
+        "app_bg":            "#f4f2fb",
+        "block_bg":          "#ffffff",
+        "text_primary":      "#1a1535",
+        "text_muted":        "#7e7a9a",
+        "input_bg":          "#ffffff",
+        "input_border":      "#c7bfee",
+        "input_text":        "#1a1535",
+        "tab_active_bg":     "#7f56da",
+        "tab_active_text":   "#ffffff",
+        "tab_inactive_bg":   "#e8e4f7",
+        "tab_inactive_text": "#4a4270",
+        "btn_primary_bg":    "#7f56da",
+        "btn_primary_text":  "#ffffff",
+        "btn_secondary_bg":  "#ece9f8",
+        "btn_secondary_text":"#4a4270",
+        "divider":           "#d4cef5",
+        "card_shadow":       "0 2px 12px rgba(127,86,218,0.10)",
+    },
+    "🌙 Dark": {
+        "app_bg":            "#0d0b18",
+        "block_bg":          "#1a1630",
+        "text_primary":      "#ede9ff",
+        "text_muted":        "#7a7494",
+        "input_bg":          "#211d36",
+        "input_border":      "#3d3660",
+        "input_text":        "#ede9ff",
+        "tab_active_bg":     "#7f56da",
+        "tab_active_text":   "#ffffff",
+        "tab_inactive_bg":   "#211d36",
+        "tab_inactive_text": "#b8b0d8",
+        "btn_primary_bg":    "#7f56da",
+        "btn_primary_text":  "#ffffff",
+        "btn_secondary_bg":  "#211d36",
+        "btn_secondary_text":"#b8b0d8",
+        "divider":           "#2e294d",
+        "card_shadow":       "0 2px 20px rgba(0,0,0,0.40)",
+    },
+    "💻 System": None,  # handled by CSS media query
+}
+
+
+def build_theme_css(p: dict) -> str:
+    """Build a full <style> block from a palette dict `p`."""
+    return f"""
+    <style>
+    /* ── App shell ───────────────────────────────────── */
+    .stApp, .block-container {{
+        background-color: {p["app_bg"]} !important;
+    }}
+
+    /* ── Typography ───────────────────────────────────── */
+    html, body, [class*="css"],
+    .stMarkdown, .stText,
+    label, p, span, li {{
+        color: {p["text_primary"]} !important;
+    }}
+    h1, h2, h3, h4, h5, h6 {{
+        color: {p["text_primary"]} !important;
+    }}
+    .stCaption, small {{
+        color: {p["text_muted"]} !important;
+    }}
+
+    /* ── Inputs ───────────────────────────────────────── */
+    textarea, input {{
+        background-color: {p["input_bg"]}     !important;
+        color:            {p["input_text"]}   !important;
+        border-color:     {p["input_border"]} !important;
+        border-radius:    8px                 !important;
+    }}
+    .stTextArea > div > div,
+    .stTextInput > div > div,
+    div[data-baseweb="select"] > div {{
+        background-color: {p["input_bg"]}     !important;
+        border-color:     {p["input_border"]} !important;
+        border-radius:    8px                 !important;
+    }}
+    /* Dropdown menu */
+    div[data-baseweb="popover"] li,
+    div[data-baseweb="menu"]    li {{
+        background-color: {p["input_bg"]}   !important;
+        color:            {p["input_text"]} !important;
+    }}
+    div[data-baseweb="popover"] li:hover,
+    div[data-baseweb="menu"]    li:hover {{
+        background-color: {p["tab_inactive_bg"]} !important;
+    }}
+    div[data-baseweb="select"] span {{
+        color: {p["input_text"]} !important;
+    }}
+
+    /* ── Primary buttons ──────────────────────────────── */
+    .stButton > button {{
+        background-color: {p["btn_primary_bg"]}  !important;
+        color:            {p["btn_primary_text"]} !important;
+        border:           none                    !important;
+        border-radius:    8px                     !important;
+        font-weight:      600                     !important;
+        transition:       opacity 0.2s;
+    }}
+    .stButton > button:hover {{ opacity: 0.86 !important; }}
+
+    /* ── Download buttons ─────────────────────────────── */
+    .stDownloadButton > button {{
+        background-color: {p["btn_secondary_bg"]}  !important;
+        color:            {p["btn_secondary_text"]} !important;
+        border:           1px solid {p["input_border"]} !important;
+        border-radius:    8px !important;
+        font-weight:      500 !important;
+    }}
+
+    /* ── Tabs ─────────────────────────────────────────── */
+    div[data-baseweb="tab-list"] {{
+        background-color: {p["tab_inactive_bg"]} !important;
+        border-radius:    10px                   !important;
+        padding:          4px                    !important;
+        gap:              4px                    !important;
+    }}
+    button[data-baseweb="tab"] {{
+        background-color: transparent              !important;
+        color:            {p["tab_inactive_text"]} !important;
+        border-radius:    8px                      !important;
+        font-weight:      500                      !important;
+        transition:       background 0.2s, color 0.2s;
+    }}
+    button[data-baseweb="tab"][aria-selected="true"] {{
+        background-color: {p["tab_active_bg"]}   !important;
+        color:            {p["tab_active_text"]}  !important;
+        font-weight:      700                     !important;
+        box-shadow:       {p["card_shadow"]}      !important;
+    }}
+
+    /* ── Alerts ───────────────────────────────────────── */
+    div[data-testid="stAlert"] {{
+        background-color: {p["block_bg"]}    !important;
+        color:            {p["text_primary"]} !important;
+        border-radius:    10px !important;
+    }}
+
+    /* ── Divider ──────────────────────────────────────── */
+    hr {{ border-color: {p["divider"]} !important; }}
+
+    /* ── Scrollbar ────────────────────────────────────── */
+    ::-webkit-scrollbar             {{ width: 6px; }}
+    ::-webkit-scrollbar-track       {{ background: {p["app_bg"]}; }}
+    ::-webkit-scrollbar-thumb       {{ background: {p["input_border"]}; border-radius: 3px; }}
+    ::-webkit-scrollbar-thumb:hover {{ background: {p["btn_primary_bg"]}; }}
+    </style>
+    """
+
+
+SYSTEM_CSS = """
+<style>
+@media (prefers-color-scheme: light) {
+    .stApp, .block-container { background-color: #f4f2fb !important; }
+    html, body, [class*="css"], .stMarkdown, p, span, label, li { color: #1a1535 !important; }
+    h1,h2,h3,h4,h5,h6 { color: #1a1535 !important; }
+    textarea, input { background-color: #ffffff !important; color: #1a1535 !important; border-color: #c7bfee !important; border-radius: 8px !important; }
+    div[data-baseweb="select"] > div { background-color: #ffffff !important; border-color: #c7bfee !important; }
+    .stButton > button { background-color: #7f56da !important; color: #ffffff !important; border-radius: 8px !important; }
+    div[data-baseweb="tab-list"] { background-color: #e8e4f7 !important; border-radius: 10px !important; }
+    button[data-baseweb="tab"][aria-selected="true"] { background-color: #7f56da !important; color: #ffffff !important; }
+    hr { border-color: #d4cef5 !important; }
+}
+@media (prefers-color-scheme: dark) {
+    .stApp, .block-container { background-color: #0d0b18 !important; }
+    html, body, [class*="css"], .stMarkdown, p, span, label, li { color: #ede9ff !important; }
+    h1,h2,h3,h4,h5,h6 { color: #ede9ff !important; }
+    textarea, input { background-color: #211d36 !important; color: #ede9ff !important; border-color: #3d3660 !important; border-radius: 8px !important; }
+    div[data-baseweb="select"] > div { background-color: #211d36 !important; border-color: #3d3660 !important; }
+    div[data-baseweb="select"] span { color: #ede9ff !important; }
+    .stButton > button { background-color: #7f56da !important; color: #ffffff !important; border-radius: 8px !important; }
+    div[data-baseweb="tab-list"] { background-color: #211d36 !important; border-radius: 10px !important; }
+    button[data-baseweb="tab"] { color: #b8b0d8 !important; }
+    button[data-baseweb="tab"][aria-selected="true"] { background-color: #7f56da !important; color: #ffffff !important; }
+    hr { border-color: #2e294d !important; }
+}
+</style>
+"""
+
+
+# ── 5. THEME STATE & CSS INJECTION ───────────────────────────────────────────
+if "brightins_theme" not in st.session_state:
+    st.session_state["brightins_theme"] = "🌞 Light"
+
+current_theme = st.session_state["brightins_theme"]
+if current_theme == "💻 System":
+    st.markdown(SYSTEM_CSS, unsafe_allow_html=True)
+else:
+    st.markdown(build_theme_css(THEMES[current_theme]), unsafe_allow_html=True)
+
+
+# ── 6. TOP BAR: title left | theme selector right ─────────────────────────────
+top_left, top_right = st.columns([3, 1])
+
+with top_left:
+    st.title("Brightins 🚀")
+    st.subheader("Your Global AI Marketing Employee")
+
+with top_right:
+    st.markdown("<div style='padding-top:22px;'></div>", unsafe_allow_html=True)
+    chosen = st.selectbox(
+        label="Theme",
+        options=list(THEMES.keys()),
+        index=list(THEMES.keys()).index(current_theme),
+        key="theme_selector",
+        label_visibility="collapsed",
+        help="Switch between Light, Dark, or your OS system theme.",
+    )
+    if chosen != current_theme:
+        st.session_state["brightins_theme"] = chosen
+        st.rerun()
+
+st.write("---")
+
+
+# ── 7. LOCAL AI SIMULATOR ENGINE (100 % unchanged) ───────────────────────────
 def generate_social_posts_local(business_description, tone, business_goal):
-    time.sleep(1.2) # Realism delay
-    
-    desc = business_description.strip() if business_description.strip() else "our premium products"
+    time.sleep(1.2)
+
+    desc       = business_description.strip() if business_description.strip() else "our premium products"
     desc_lower = desc.lower()
-    
-    # Simple Auto-detect Hausa
-    hausa_keywords = ["takalma", "saida", "kano", "turare", "yadi", "shadda", "atamfa", "kaya", "kudi", "maka", "kuna", "mun", "ina", "tsada", "bunkasa", "kasuwanci"]
+
+    hausa_keywords = [
+        "takalma", "saida", "kano", "turare", "yadi", "shadda", "atamfa",
+        "kaya", "kudi", "maka", "kuna", "mun", "ina", "tsada", "bunkasa", "kasuwanci",
+    ]
     is_hausa = any(word in desc_lower for word in hausa_keywords)
-    
+
     if is_hausa:
-        cta_text = "Turo mana saƙon gaggawa (DM) yanzu a nan don ka mallaki naka! 📥"
-        body_text = f"Kuna neman mafi kyau? Ga cikakken bayani akan {desc}. Muna tabbatar muku da inganci da gaskiya a kowane lokaci domin gamsuwarku."
+        cta_text  = "Turo mana saƙon gaggawa (DM) yanzu a nan don ka mallaki naka! 📥"
+        body_text = (
+            f"Kuna neman mafi kyau? Ga cikakken bayani akan {desc}. "
+            "Muna tabbatar muku da inganci da gaskiya a kowane lokaci domin gamsuwarku."
+        )
         hashtags = "#Kasuwanci #Kano #Inganci #Arewa"
-        
+
         fb = f"🚀 [Brightins AI Engine - Tone: {tone}]\n\n{body_text}\n\n{cta_text}\n\n{hashtags}"
         ig = f"✨ Kasuwancinmu na gari (Goal: {business_goal}) ✨\n\n{body_text}\n\n{cta_text}\n\n{hashtags}"
         tw = f"{body_text}\n\n{cta_text} {hashtags}"
-        tt = f"🎥 [TikTok/Shorts Script - Daƙiƙa 60]\nTone: {tone}\n\n[0-15s - HOOK]: 'Tsaya ka saurara! Idan kana son bunkasa kasuwancinka a Intanet, wannan bidiyon naka ne!'\n\n[15-45s - BODY]: 'Ga babban dalilin da ya sa kowa ke magana akan {desc}. Yana da sauƙi da inganci.'\n\n[45-60s - CTA]: '{cta_text}'"
-    
+        tt = (
+            f"🎥 [TikTok/Shorts Script - Daƙiƙa 60]\nTone: {tone}\n\n"
+            f"[0-15s - HOOK]: 'Tsaya ka saurara! Idan kana son bunkasa kasuwancinka a Intanet, wannan bidiyon naka ne!'\n\n"
+            f"[15-45s - BODY]: 'Ga babban dalilin da ya sa kowa ke magana akan {desc}. Yana da sauƙi da inganci.'\n\n"
+            f"[45-60s - CTA]: '{cta_text}'"
+        )
     else:
-        cta_text = "Send us a Direct Message (DM) right now to place your order! 📥"
-        body_text = f"Looking for the ultimate solution to elevate your lifestyle? Introducing '{desc}'. Crafted with precision and engineered to deliver top-notch results just for you."
+        cta_text  = "Send us a Direct Message (DM) right now to place your order! 📥"
+        body_text = (
+            f"Looking for the ultimate solution to elevate your lifestyle? Introducing '{desc}'. "
+            "Crafted with precision and engineered to deliver top-notch results just for you."
+        )
         hashtags = "#BusinessGrowth #PremiumQuality #Innovation"
-        
+
         fb = f"🚀 [Brightins AI Generated Post]\nTone: {tone} | Goal: {business_goal}\n\n{body_text}\n\n{cta_text}\n\n{hashtags}"
         ig = f"✨ Quality meets excellence. ✨\n\n{body_text}\n\n{cta_text}\n\n{hashtags}"
         tw = f"{body_text}\n\n{cta_text} {hashtags}"
-        tt = f"🎥 [TikTok/Shorts Script - 60 Seconds]\nTone: {tone}\n\n[0-15s - HOOK]: 'Stop scrolling if you want to elevate your business today!'\n\n[15-45s - BODY]: 'Here is why everyone is talking about {desc}. It is simple, effective, and designed just for you.'\n\n[45-60s - CTA]: '{cta_text}'"
+        tt = (
+            f"🎥 [TikTok/Shorts Script - 60 Seconds]\nTone: {tone}\n\n"
+            f"[0-15s - HOOK]: 'Stop scrolling if you want to elevate your business today!'\n\n"
+            f"[15-45s - BODY]: 'Here is why everyone is talking about {desc}. It is simple, effective, and designed just for you.'\n\n"
+            f"[45-60s - CTA]: '{cta_text}'"
+        )
 
     return {"facebook": fb, "instagram": ig, "twitter": tw, "tiktok": tt}
 
-# 4. STREAMLIT UI LAYOUT
-st.title("Brightins 🚀")
-st.subheader("Your Global AI Marketing Employee")
-st.write("---")
 
+# ── 8. MAIN UI LAYOUT (100 % unchanged logic) ─────────────────────────────────
 col1, col2 = st.columns([1, 1.2])
 
 with col1:
@@ -74,110 +307,112 @@ with col1:
         "Business Description",
         value="",
         placeholder="e.g., We sell premium organic coffee blends online to customers worldwide...",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
     )
-    
+
     st.markdown("### 2. Choose Tone")
     st.caption("Select the emotional tone for your marketing copy")
     tone = st.selectbox(
-        "Tone", 
+        "Tone",
         ["Professional", "Aggressive Sales", "Friendly", "Humorous", "Luxury"],
-        label_visibility="collapsed"
+        label_visibility="collapsed",
     )
-    
+
     st.markdown("### 3. Business Goal")
     st.caption("What is the main objective of this content?")
     business_goal = st.selectbox(
-        "Goal", 
+        "Goal",
         ["Increase Sales", "Brand Awareness", "Get Leads"],
-        label_visibility="collapsed"
+        label_visibility="collapsed",
     )
-    
+
     st.write("")
     generate_button = st.button("🚀 Generate Marketing Content", use_container_width=True)
 
+
 with col2:
     st.markdown("### 📋 Your Generated Content")
-    
+
     if generate_button:
         if not business_description.strip():
             st.error("Please enter your business description first!")
         else:
             with st.spinner("Brightins AI Engine is analyzing..."):
                 posts = generate_social_posts_local(business_description, tone, business_goal)
-                st.session_state['brightins_posts'] = posts
-                st.session_state['data_ready'] = True
+                st.session_state["brightins_posts"] = posts
+                st.session_state["data_ready"]       = True
 
-    if st.session_state.get('data_ready', False):
-        posts = st.session_state['brightins_posts']
-        
-        tab1, tab2, tab3, tab4 = st.tabs(["📘 Facebook Post", "📸 Instagram Caption", "🐦 X (Twitter) Post", "🎥 TikTok Script"])
-        
+    if st.session_state.get("data_ready", False):
+        posts = st.session_state["brightins_posts"]
+
+        tab1, tab2, tab3, tab4 = st.tabs(
+            ["📘 Facebook Post", "📸 Instagram Caption", "🐦 X (Twitter) Post", "🎥 TikTok Script"]
+        )
+
         with tab1:
             st.text_area("Facebook Content", posts["facebook"], height=200, label_visibility="collapsed")
             components.html(f"""
                 <textarea id="fb_text" style="display:none;">{posts["facebook"]}</textarea>
-                <button onclick="var text = document.getElementById('fb_text').value; navigator.clipboard.writeText(text); alert('🚀 Facebook Post Copied!')" style="
-                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;
-                ">📋 Copy Facebook Post</button>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('fb_text').value); alert('🚀 Facebook Post Copied!')"
+                    style="background-color:#7f56da;color:white;border:none;padding:12px 20px;border-radius:6px;
+                    cursor:pointer;font-weight:bold;font-size:14px;width:100%;display:flex;
+                    align-items:center;justify-content:center;gap:8px;margin-bottom:10px;">
+                    📋 Copy Facebook Post
+                </button>
             """, height=50)
-            st.download_button(
-                label="📥 Download Facebook Post",
-                data=posts["facebook"],
-                file_name="brightins_facebook.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
-            
+            st.download_button("📥 Download Facebook Post", data=posts["facebook"],
+                               file_name="brightins_facebook.txt", mime="text/plain", use_container_width=True)
+
         with tab2:
             st.text_area("Instagram Content", posts["instagram"], height=200, label_visibility="collapsed")
             components.html(f"""
                 <textarea id="ig_text" style="display:none;">{posts["instagram"]}</textarea>
-                <button onclick="var text = document.getElementById('ig_text').value; navigator.clipboard.writeText(text); alert('📸 Instagram Caption Copied!')" style="
-                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;
-                ">📋 Copy Instagram Caption</button>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('ig_text').value); alert('📸 Instagram Caption Copied!')"
+                    style="background-color:#7f56da;color:white;border:none;padding:12px 20px;border-radius:6px;
+                    cursor:pointer;font-weight:bold;font-size:14px;width:100%;display:flex;
+                    align-items:center;justify-content:center;gap:8px;margin-bottom:10px;">
+                    📋 Copy Instagram Caption
+                </button>
             """, height=50)
-            st.download_button(
-                label="📥 Download Instagram Caption",
-                data=posts["instagram"],
-                file_name="brightins_instagram.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
-            
+            st.download_button("📥 Download Instagram Caption", data=posts["instagram"],
+                               file_name="brightins_instagram.txt", mime="text/plain", use_container_width=True)
+
         with tab3:
             st.text_area("X Content", posts["twitter"], height=150, label_visibility="collapsed")
             components.html(f"""
                 <textarea id="x_text" style="display:none;">{posts["twitter"]}</textarea>
-                <button onclick="var text = document.getElementById('x_text').value; navigator.clipboard.writeText(text); alert('𝕏 X Post Copied!')" style="
-                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;
-                ">📋 Copy X Post</button>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('x_text').value); alert('𝕏 X Post Copied!')"
+                    style="background-color:#7f56da;color:white;border:none;padding:12px 20px;border-radius:6px;
+                    cursor:pointer;font-weight:bold;font-size:14px;width:100%;display:flex;
+                    align-items:center;justify-content:center;gap:8px;margin-bottom:10px;">
+                    📋 Copy X Post
+                </button>
             """, height=50)
-            st.download_button(
-                label="📥 Download X Post",
-                data=posts["twitter"],
-                file_name="brightins_x_post.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
-            
+            st.download_button("📥 Download X Post", data=posts["twitter"],
+                               file_name="brightins_x_post.txt", mime="text/plain", use_container_width=True)
+
         with tab4:
             st.text_area("TikTok Content", posts["tiktok"], height=220, label_visibility="collapsed")
             components.html(f"""
                 <textarea id="tt_text" style="display:none;">{posts["tiktok"]}</textarea>
-                <button onclick="var text = document.getElementById('tt_text').value; navigator.clipboard.writeText(text); alert('🎥 Video Script Copied!')" style="
-                    background-color: #7f56da; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;
-                ">📋 Copy Video Script</button>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('tt_text').value); alert('🎥 Video Script Copied!')"
+                    style="background-color:#7f56da;color:white;border:none;padding:12px 20px;border-radius:6px;
+                    cursor:pointer;font-weight:bold;font-size:14px;width:100%;display:flex;
+                    align-items:center;justify-content:center;gap:8px;margin-bottom:10px;">
+                    📋 Copy Video Script
+                </button>
             """, height=50)
-            st.download_button(
-                label="📥 Download TikTok Script",
-                data=posts["tiktok"],
-                file_name="brightins_tiktok_script.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
+            st.download_button("📥 Download TikTok Script", data=posts["tiktok"],
+                               file_name="brightins_tiktok_script.txt", mime="text/plain", use_container_width=True)
+
     else:
         st.write("Your multi-platform marketing content will appear here after you hit the generate button.")
 
-# --- FOOTER SECTION ---
-st.markdown("<br><br><hr><p style='text-align: center; color: gray; font-size: 14px;'>© 2026 Brightins AI Enterprise. All Rights Reserved.</p>", unsafe_allow_html=True)
+
+# ── 9. FOOTER ─────────────────────────────────────────────────────────────────
+st.markdown(
+    "<br><br><hr>"
+    "<p style='text-align:center;color:gray;font-size:14px;'>"
+    "© 2026 Brightins AI Enterprise. All Rights Reserved.</p>",
+    unsafe_allow_html=True,
+)
