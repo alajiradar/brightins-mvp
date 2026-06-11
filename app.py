@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from openai import OpenAI
 
 # 1. Page Configuration
 st.set_page_config(
@@ -7,10 +8,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# 2. INJECT SIMPLE & NEUTRAL CSS (Don kiyaye kyawun launuka da kashe jan layi)
+# 2. INJECT NEUTRAL CSS
 st.markdown("""
     <style>
-    /* Manyan maballai na Slate Black */
     button[kind="primary"] {
         background-color: #1E293B !important;
         color: #FFFFFF !important;
@@ -21,16 +21,12 @@ st.markdown("""
         background-color: #334155 !important;
         color: #FFFFFF !important;
     }
-    
-    /* Hana fitar jan layi lokacin da aka danna akwatin rubutu */
     textarea:focus, select:focus, input:focus, 
     div[data-baseweb="textarea"]:focus-within, 
     div[data-baseweb="select"]:focus-within {
         border-color: #1E293B !important;
         box-shadow: 0 0 0 1px #1E293B !important;
     }
-    
-    /* Daidaita kalar Tabs indicators */
     button[aria-selected="true"] {
         border-bottom-color: #1E293B !important;
     }
@@ -43,44 +39,25 @@ st.markdown("""
 # 3. JAVASCRIPT REAL COPY BUTTON FUNCTION
 def render_js_copy_button(text_to_copy, button_label="📋 Copy Content"):
     safe_text = text_to_copy.replace('\\', '\\\\').replace('`', '\\`').replace('$', '\\$')
-    
     html_code = f"""
     <button id="copyScriptBtn" style="
-        width: 100%;
-        background-color: #1E293B;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        transition: background-color 0.2s;
+        width: 100%; background-color: #1E293B; color: white; border: none;
+        padding: 10px 16px; border-radius: 6px; cursor: pointer;
+        font-family: -apple-system, system-ui; font-size: 14px; font-weight: 500;
     ">{button_label}</button>
-
     <script>
     document.getElementById('copyScriptBtn').addEventListener('click', function() {{
         const textArea = document.createElement('textarea');
         textArea.value = `{safe_text}`;
         document.body.appendChild(textArea);
         textArea.select();
-        
         try {{
             document.execCommand('copy');
             const btn = document.getElementById('copyScriptBtn');
-            const originalText = btn.innerText;
             btn.innerText = "✅ Copied to Clipboard!";
             btn.style.backgroundColor = "#10B981";
-            
-            setTimeout(() => {{
-                btn.innerText = originalText;
-                btn.style.backgroundColor = "#1E293B";
-            }}, 2000);
-        }} catch (err) {{
-            alert('Oops, unable to copy');
-        }}
-        
+            setTimeout(() => {{ btn.innerText = "{button_label}"; btn.style.backgroundColor = "#1E293B"; }}, 2000);
+        }} catch (err) {{ alert('Unable to copy'); }}
         document.body.removeChild(textArea);
     }});
     </script>
@@ -100,11 +77,9 @@ with st.sidebar:
     st.title("✨ Brightins")
     st.caption("Your Global AI Marketing Employee")
     st.write("") 
-    
     st.button("🔮 Generate Content", use_container_width=True, type="primary")
     st.button("⏳ My History", use_container_width=True, disabled=True)
     st.button("💾 Saved Content", use_container_width=True, disabled=True)
-    
     st.divider()
     st.caption("© 2026 Brightins. All rights reserved.")
 
@@ -140,26 +115,67 @@ with col_input:
     
     st.write("") 
     generate_btn = st.button("✨ Generate Marketing Content", type="primary", use_container_width=True)
-    st.info("💡 **Tip:** Write in any language. Brightins will automatically detect the language and generate content.")
 
-# Sarrafa danna Generate
+# Sarrafa danna Generate ta amfani da OpenAI API
 if generate_btn:
     if not business_description.strip():
         st.error("Please provide a business description on the left side before generating.")
     else:
-        st.session_state.generated = True
-        sample_hashtags = "\n\n#Business #Marketing #AI #SaaS #Growth #Brightins"
-        
-        # Daurawa da sabon bayani kowane lokaci
-        st.session_state.fb_content = f"[Mock Facebook Post Content]\n\nTargeted Campaign for: {business_description}\nTone Settings: {tone}\nCampaign Objective: {goal}{sample_hashtags}"
-        st.session_state.ig_content = f"[Mock Instagram Caption]\n\nPremium quality tailored directly for you! ✨\nDesigned for: {business_description}\nTone: {tone}{sample_hashtags}"
-        st.session_state.x_content = f"[Mock X Post]\n\nTransforming results through smart automation for {business_description}. Let's make it happen. 🔥{sample_hashtags}"
-        st.session_state.tiktok_content = (
-            f"🎬 **[HOOK]:** Stop scrolling if you want to scale your business today!\n\n"
-            f"📝 **[BODY]:** Here is exactly how we deliver values for {business_description}.\n\n"
-            f"📣 **[CTA]:** Check the link in our description to get started now!\n\n"
-            f"🏷️ *Tags:* {sample_hashtags.strip()}"
-        )
+        # Bincika ko an saka API key a Secrets
+        if "OPENAI_API_KEY" not in st.secrets:
+            st.error("API Key missing! Please add 'OPENAI_API_KEY' inside Streamlit Cloud Secrets.")
+        else:
+            with st.spinner("Brightins AI is thinking and writing your campaigns... 🧠⚡"):
+                try:
+                    # Kira OpenAI API
+                    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+                    
+                    # Tsara babban Umarni (System/User Prompt)
+                    system_prompt = (
+                        "You are Brightins, an elite global marketing specialist. Your task is to generate high-converting "
+                        "marketing content in the SAME language used by the user. "
+                        "You must return the content for 4 specific platforms separated exactly by these markers:\n"
+                        "[START_FB] for Facebook\n"
+                        "[START_IG] for Instagram\n"
+                        "[START_X] for X (Twitter)\n"
+                        "[START_TT] for TikTok Script"
+                    )
+                    
+                    user_prompt = f"""
+                    Business Profile: {business_description}
+                    Desired Tone: {tone}
+                    Campaign Goal: {goal}
+                    
+                    Write tailored copies for Facebook, Instagram, X, and a video script for TikTok. Include appropriate emojis and highly relevant hashtags.
+                    """
+                    
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini", # Ko gpt-4o dangane da budget dinka
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        temperature=0.7
+                    )
+                    
+                    full_text = response.choices[0].message.content
+                    
+                    # Raba sakamakon ta amfani da alamomin (Markers Parsing)
+                    fb_part = full_text.split("[START_FB]")[-1].split("[START_IG]")[0].strip()
+                    ig_part = full_text.split("[START_IG]")[-1].split("[START_X]")[0].strip()
+                    x_part = full_text.split("[START_X]")[-1].split("[START_TT]")[0].strip()
+                    tt_part = full_text.split("[START_TT]")[-1].strip()
+                    
+                    # Ajiye a Session State
+                    st.session_state.fb_content = fb_part if fb_part else "Error parsing Facebook content."
+                    st.session_state.ig_content = ig_part if ig_part else "Error parsing Instagram content."
+                    st.session_state.x_content = x_part if x_part else "Error parsing X content."
+                    st.session_state.tiktok_content = tt_part if tt_part else "Error parsing TikTok script."
+                    
+                    st.session_state.generated = True
+                    
+                except Exception as e:
+                    st.error(f"An error occurred with AI service: {str(e)}")
 
 # ================= ƁANGAREN DAMA: OUTPUTS =================
 with col_output:
@@ -170,41 +186,30 @@ with col_output:
         st.success("Content generated successfully! Scroll through the tabs below.")
         
         tab_fb, tab_ig, tab_x, tab_tiktok = st.tabs([
-            "📘 Facebook Post", 
-            "📸 Instagram Caption", 
-            "🐦 X (Twitter) Post", 
-            "🎵 TikTok Script"
+            "📘 Facebook Post", "📸 Instagram Caption", "🐦 X (Twitter) Post", "🎵 TikTok Script"
         ])
         
         with tab_fb:
             st.subheader("Facebook Post")
-            # AN Cire 'key' a nan domin tsarin ya daina kullewa akan tsohon rubutu!
-            st.text_area(label="FB text", value=st.session_state.fb_content, height=180, label_visibility="collapsed")
-            
+            st.text_area(label="FB text", value=st.session_state.fb_content, height=220, label_visibility="collapsed")
             render_js_copy_button(st.session_state.fb_content, "📋 Copy Facebook Content")
             st.download_button("📥 Download File", data=st.session_state.fb_content, file_name="facebook_post.txt", mime="text/plain", key="btn_dl_fb", use_container_width=True)
             
         with tab_ig:
             st.subheader("Instagram Caption")
-            # AN Cire 'key' a nan domin tsarin ya daina kullewa akan tsohon rubutu!
-            st.text_area(label="IG text", value=st.session_state.ig_content, height=180, label_visibility="collapsed")
-            
+            st.text_area(label="IG text", value=st.session_state.ig_content, height=220, label_visibility="collapsed")
             render_js_copy_button(st.session_state.ig_content, "📋 Copy Instagram Content")
             st.download_button("📥 Download File", data=st.session_state.ig_content, file_name="instagram_caption.txt", mime="text/plain", key="btn_dl_ig", use_container_width=True)
             
         with tab_x:
             st.subheader("X (Twitter) Post")
-            # AN Cire 'key' a nan domin tsarin ya daina kullewa akan tsohon rubutu!
-            st.text_area(label="X text", value=st.session_state.x_content, height=120, label_visibility="collapsed")
-            
+            st.text_area(label="X text", value=st.session_state.x_content, height=150, label_visibility="collapsed")
             render_js_copy_button(st.session_state.x_content, "📋 Copy X Content")
             st.download_button("📥 Download File", data=st.session_state.x_content, file_name="x_post.txt", mime="text/plain", key="btn_dl_x", use_container_width=True)
             
         with tab_tiktok:
             st.subheader("TikTok Video Script")
-            # AN Cire 'key' a nan domin tsarin ya daina kullewa akan tsohon rubutu!
-            st.text_area(label="TikTok text", value=st.session_state.tiktok_content, height=180, label_visibility="collapsed")
-            
+            st.text_area(label="TikTok text", value=st.session_state.tiktok_content, height=220, label_visibility="collapsed")
             render_js_copy_button(st.session_state.tiktok_content, "📋 Copy TikTok Script")
             st.download_button("📥 Download Script", data=st.session_state.tiktok_content, file_name="tiktok_script.txt", mime="text/plain", key="btn_dl_tiktok", use_container_width=True)
     else:
