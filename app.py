@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from openai import OpenAI
+import google.generativeai as genai
 
 # 1. Page Configuration
 st.set_page_config(
@@ -116,21 +116,19 @@ with col_input:
     st.write("") 
     generate_btn = st.button("✨ Generate Marketing Content", type="primary", use_container_width=True)
 
-# Sarrafa danna Generate ta amfani da OpenAI API
+# Sarrafa danna Generate ta amfani da Google Gemini API
 if generate_btn:
     if not business_description.strip():
         st.error("Please provide a business description on the left side before generating.")
     else:
-        # Bincika ko an saka API key a Secrets
-        if "OPENAI_API_KEY" not in st.secrets:
-            st.error("API Key missing! Please add 'OPENAI_API_KEY' inside Streamlit Cloud Secrets.")
+        if "GEMINI_API_KEY" not in st.secrets:
+            st.error("API Key missing! Please add 'GEMINI_API_KEY' inside Streamlit Cloud Secrets.")
         else:
             with st.spinner("Brightins AI is thinking and writing your campaigns... 🧠⚡"):
                 try:
-                    # Kira OpenAI API
-                    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+                    # Saita Gemini API
+                    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
                     
-                    # Tsara babban Umarni (System/User Prompt)
                     system_prompt = (
                         "You are Brightins, an elite global marketing specialist. Your task is to generate high-converting "
                         "marketing content in the SAME language used by the user. "
@@ -149,16 +147,18 @@ if generate_btn:
                     Write tailored copies for Facebook, Instagram, X, and a video script for TikTok. Include appropriate emojis and highly relevant hashtags.
                     """
                     
-                    response = client.chat.completions.create(
-                        model="gpt-4o-mini", # Ko gpt-4o dangane da budget dinka
-                        messages=[
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_prompt}
-                        ],
-                        temperature=0.7
+                    # Kira model na Gemini
+                    model = genai.GenerativeModel(
+                        model_name='gemini-1.5-flash',
+                        system_instruction=system_prompt
                     )
                     
-                    full_text = response.choices[0].message.content
+                    response = model.generate_content(
+                        contents=user_prompt,
+                        generation_config={"temperature": 0.7}
+                    )
+                    
+                    full_text = response.text
                     
                     # Raba sakamakon ta amfani da alamomin (Markers Parsing)
                     fb_part = full_text.split("[START_FB]")[-1].split("[START_IG]")[0].strip()
@@ -175,7 +175,7 @@ if generate_btn:
                     st.session_state.generated = True
                     
                 except Exception as e:
-                    st.error(f"An error occurred with AI service: {str(e)}")
+                    st.error(f"An error occurred with Gemini AI service: {str(e)}")
 
 # ================= ƁANGAREN DAMA: OUTPUTS =================
 with col_output:
