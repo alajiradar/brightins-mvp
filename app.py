@@ -124,7 +124,7 @@ if generate_btn:
         if "GEMINI_API_KEY" not in st.secrets:
             st.error("API Key missing! Please add 'GEMINI_API_KEY' inside Streamlit Cloud Secrets.")
         else:
-            with st.spinner("Brightins AI is thinking and writing your campaigns... 🧠⚡"):
+            with st.spinner("Brightins is generating your content...🧠⚡"):
                 try:
                     # Saita Gemini API
                     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
