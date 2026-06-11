@@ -1,92 +1,117 @@
 import streamlit as st
 
-# 1. Page Configuration
+# 1. Page Configuration (Set to wide layout to match the mockup)
 st.set_page_config(
     page_title="Brightins - AI Marketing Employee",
-    layout="centered"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# 2. Header Section (Clean and Simple - No Icon)
-st.title("Brightins")
-st.subheader("Your Global AI Marketing Employee")
-st.write("Describe your business in any language, and Brightins will generate your tailored social media marketing campaign instantly.")
+# 2. Sidebar Navigation (Matching the left menu of your mockup)
+with st.sidebar:
+    st.title("✨ Brightins")
+    st.caption("Your Global AI Marketing Employee")
+    st.space = st.write("") # Spacer
+    
+    # Navigation Buttons (Visual representation for MVP)
+    st.button("🔮 Generate Content", use_container_width=True, type="primary")
+    st.button("⏳ My History", use_container_width=True, disabled=True)
+    st.button("💾 Saved Content", use_container_width=True, disabled=True)
+    
+    st.divider()
+    st.caption("© 2026 Brightins. All rights reserved.")
 
-st.divider()
+# 3. Main Workspace Split (Left: Input, Right: Output)
+col_input, col_output = st.columns([1, 1.3], gap="large")
 
-# 3. User Inputs Section (Fully in English)
-st.header("Business Profile")
-
-# Input 1: Business Description
-business_description = st.text_area(
-    label="What is your business about? (e.g., 'Ina sayar da takalma a Kano' or 'I sell luxury perfumes in Abuja')",
-    placeholder="Type your business description here...",
-    height=150
-)
-
-# Layout for inputs
-col1, col2 = st.columns(2)
-
-with col1:
-    # Input 2: Tone Selection
+# ================= LEFT COLUMN: INPUT =================
+with col_input:
+    st.header("Welcome to Brightins 👋")
+    st.write("Create powerful marketing content for your business in any language.")
+    
+    st.subheader("1. Describe Your Business")
+    business_description = st.text_area(
+        label="Tell us about your business or product:",
+        placeholder="Type here (e.g., 'I sell luxury perfumes in London' or any language you prefer...)",
+        height=180
+    )
+    
+    st.subheader("2. Choose Tone")
     tone = st.selectbox(
-        label="Select Tone",
+        label="Select the tone you want:",
         options=["Professional", "Friendly", "Luxury", "Aggressive Sales"]
     )
-
-with col2:
-    # Input 3: Business Goal
+    
+    st.subheader("3. Business Goal")
     goal = st.selectbox(
-        label="Select Marketing Goal",
+        label="What do you want to achieve?",
         options=["Increase Sales", "Brand Awareness", "Lead Generation", "Product Launch", "Customer Retention"]
     )
-
-st.divider()
-
-# 4. Action Button (Color is now managed globally by config.toml)
-if st.button("Generate Marketing Content", type="primary", use_container_width=True):
     
-    if not business_description.strip():
-        st.warning("Please provide a business description before generating content.")
+    st.write("") # Spacer
+    generate_btn = st.button("✨ Generate Marketing Content", type="primary", use_container_width=True)
+    
+    st.info("💡 **Tip:** Write in any language. Brightins will automatically detect the language and generate content in the same language.")
+
+# ================= RIGHT COLUMN: OUTPUT =================
+with col_output:
+    st.header("✨ Your Generated Content")
+    st.write("AI-generated content tailored for your business.")
+    
+    if generate_btn:
+        if not business_description.strip():
+            st.error("Please provide a business description on the left side before generating.")
+        else:
+            st.success("Content generated successfully! Scroll through the tabs below.")
+            
+            # Output Tabs
+            tab_fb, tab_ig, tab_x, tab_tiktok = st.tabs([
+                "📘 Facebook Post", 
+                "📸 Instagram Caption", 
+                "🐦 X (Twitter) Post", 
+                "🎵 TikTok Script"
+            ])
+            
+            # Universal tags appended inside the posts automatically
+            sample_hashtags = "\n\n#Business #Marketing #AI #SaaS #Growth #Brightins"
+            
+            with tab_fb:
+                st.subheader("Facebook Post")
+                mock_fb = f"[Mock Facebook Post Content]\n\nTargeted Campaign for: {business_description}\nTone Settings: {tone}\nCampaign Objective: {goal}{sample_hashtags}"
+                st.text_area(label="Content Display", value=mock_fb, height=180, key="fb_text", label_visibility="collapsed")
+                
+                # Action buttons stacked correctly below
+                st.button("📋 Copy to Clipboard", key="btn_copy_fb", use_container_width=True)
+                st.download_button("📥 Download File", data=mock_fb, file_name="facebook_post.txt", mime="text/plain", key="btn_dl_fb", use_container_width=True)
+                
+            with tab_ig:
+                st.subheader("Instagram Caption")
+                mock_ig = f"[Mock Instagram Caption]\n\nPremium quality tailored directly for you! ✨\nDesigned for: {business_description}\nTone: {tone}{sample_hashtags}"
+                st.text_area(label="Content Display", value=mock_ig, height=180, key="ig_text", label_visibility="collapsed")
+                
+                st.button("📋 Copy to Clipboard", key="btn_copy_ig", use_container_width=True)
+                st.download_button("📥 Download File", data=mock_ig, file_name="instagram_caption.txt", mime="text/plain", key="btn_dl_ig", use_container_width=True)
+                
+            with tab_x:
+                st.subheader("X (Twitter) Post")
+                mock_x = f"[Mock X Post]\n\nTransforming results through smart automation. Let's make it happen. 🔥{sample_hashtags}"
+                st.text_area(label="Content Display", value=mock_x, height=120, key="x_text", label_visibility="collapsed")
+                
+                st.button("📋 Copy to Clipboard", key="btn_copy_x", use_container_width=True)
+                st.download_button("📥 Download File", data=mock_x, file_name="x_post.txt", mime="text/plain", key="btn_dl_x", use_container_width=True)
+                
+            with tab_tiktok:
+                st.subheader("TikTok Video Script")
+                mock_tiktok = (
+                    f"🎬 **[HOOK]:** Stop scrolling if you want to scale your business today!\n\n"
+                    f"📝 **[BODY]:** Here is exactly how our solution changes the game for you.\n\n"
+                    f"📣 **[CTA]:** Check the link in our description to get started now!\n\n"
+                    f"🏷️ **Tags:** {sample_hashtags.strip()}"
+                )
+                st.markdown(mock_tiktok)
+                
+                st.button("📋 Copy Script", key="btn_copy_tiktok", use_container_width=True)
+                st.download_button("📥 Download Script", data=mock_tiktok, file_name="tiktok_script.txt", mime="text/plain", key="btn_dl_tiktok", use_container_width=True)
     else:
-        st.success("🤖 Brightins has successfully generated your marketing content!")
-        
-        # 5. Output Tabs (Hashtags tab removed as requested)
-        tab_fb, tab_ig, tab_x, tab_tiktok = st.tabs([
-            "📘 Facebook Post", 
-            "📸 Instagram Caption", 
-            "🐦 X (Twitter) Post", 
-            "🎵 TikTok Script"
-        ])
-        
-        # Global Hashtags that will automatically append to each post
-        sample_hashtags = "\n\n#Business #Marketing #AI #SaaS #Growth #Brightins"
-        
-        with tab_fb:
-            st.subheader("Facebook Post")
-            mock_fb = f"[Mock Facebook Post Content]\n\nBusiness: {business_description}\nTone: {tone}\nGoal: {goal}{sample_hashtags}"
-            st.text_area(label="Copy Facebook Content", value=mock_fb, height=200, key="fb_text")
-            st.button("Copy to Clipboard", key="btn_fb")
-            
-        with tab_ig:
-            st.subheader("Instagram Caption")
-            mock_ig = f"[Mock Instagram Caption]\n\nElevate your lifestyle with the best offers today! ✨\nTone: {tone}\nGoal: {goal}{sample_hashtags}"
-            st.text_area(label="Copy Instagram Content", value=mock_ig, height=200, key="ig_text")
-            st.button("Copy to Clipboard", key="btn_ig")
-            
-        with tab_x:
-            st.subheader("X (Twitter) Post")
-            mock_x = f"[Mock X Post]\n\nReady to transform your business results? Let's get started. 🔥{sample_hashtags}"
-            st.text_area(label="Copy X Content", value=mock_x, height=150, key="x_text")
-            st.button("Copy to Clipboard", key="btn_x")
-            
-        with tab_tiktok:
-            st.subheader("TikTok Video Script")
-            # For TikTok script, we append hashtags to the end of the markdown content naturally
-            mock_tiktok = (
-                f"🎬 **[HOOK]:** Stop scrolling if you want to scale your business today!\n\n"
-                f"📝 **[BODY]:** Here is exactly how {business_description} changes the game for you.\n\n"
-                f"📣 **[CTA]:** Click the link in our bio to order yours right now!\n\n"
-                f"🏷️ **Hashtags:** {sample_hashtags.strip()}"
-            )
-            st.markdown(mock_tiktok)
-            st.button("Copy Script", key="btn_tiktok")
+        # State before user clicks Generate
+        st.info("Provide your business profile details on the left and click 'Generate' to view your social media campaigns here.")
