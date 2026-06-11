@@ -41,9 +41,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 3. JAVASCRIPT REAL COPY BUTTON FUNCTION
-# Wannan aikin zai samar da maballin Copy na gaske wanda ba ya tayar da loda shafi
 def render_js_copy_button(text_to_copy, button_label="📋 Copy Content"):
-    # Gyara rubutu don kada ya karfafa muryar lambobin JS
     safe_text = text_to_copy.replace('\\', '\\\\').replace('`', '\\`').replace('$', '\\$')
     
     html_code = f"""
@@ -73,7 +71,7 @@ def render_js_copy_button(text_to_copy, button_label="📋 Copy Content"):
             const btn = document.getElementById('copyScriptBtn');
             const originalText = btn.innerText;
             btn.innerText = "✅ Copied to Clipboard!";
-            btn.style.backgroundColor = "#10B981"; // Canza zuwa Green na nasara
+            btn.style.backgroundColor = "#10B981";
             
             setTimeout(() => {{
                 btn.innerText = originalText;
@@ -89,7 +87,7 @@ def render_js_copy_button(text_to_copy, button_label="📋 Copy Content"):
     """
     components.html(html_code, height=45)
 
-# 4. INITIALIZE SESSION STATE (Kwakwalwar Ajiya)
+# 4. INITIALIZE SESSION STATE
 if "generated" not in st.session_state:
     st.session_state.generated = False
     st.session_state.fb_content = ""
@@ -119,7 +117,6 @@ with col_input:
     st.write("Create powerful marketing content for your business in any language.")
     
     st.subheader("1. Describe Your Business")
-    # Muna amfani da key domin Streamlit ya riƙe canjin rubutu ko da yaushe
     business_description = st.text_area(
         label="Tell us about your business or product:",
         placeholder="Type here (e.g., 'I sell luxury perfumes in London'...)",
@@ -145,7 +142,7 @@ with col_input:
     generate_btn = st.button("✨ Generate Marketing Content", type="primary", use_container_width=True)
     st.info("💡 **Tip:** Write in any language. Brightins will automatically detect the language and generate content.")
 
-# Sarrafa danna Generate: Lokacin da aka danna, kowane lokaci zai ɗauki sabon rubutun hagu baki ɗaya!
+# Sarrafa danna Generate
 if generate_btn:
     if not business_description.strip():
         st.error("Please provide a business description on the left side before generating.")
@@ -153,7 +150,7 @@ if generate_btn:
         st.session_state.generated = True
         sample_hashtags = "\n\n#Business #Marketing #AI #SaaS #Growth #Brightins"
         
-        # Sabunta ainihin bayanan state da sabon rubutun da aka shigar
+        # Daurawa da sabon bayani kowane lokaci
         st.session_state.fb_content = f"[Mock Facebook Post Content]\n\nTargeted Campaign for: {business_description}\nTone Settings: {tone}\nCampaign Objective: {goal}{sample_hashtags}"
         st.session_state.ig_content = f"[Mock Instagram Caption]\n\nPremium quality tailored directly for you! ✨\nDesigned for: {business_description}\nTone: {tone}{sample_hashtags}"
         st.session_state.x_content = f"[Mock X Post]\n\nTransforming results through smart automation for {business_description}. Let's make it happen. 🔥{sample_hashtags}"
@@ -181,29 +178,32 @@ with col_output:
         
         with tab_fb:
             st.subheader("Facebook Post")
-            st.text_area(label="FB text", value=st.session_state.fb_content, height=180, key="fb_text_area", label_visibility="collapsed")
+            # AN Cire 'key' a nan domin tsarin ya daina kullewa akan tsohon rubutu!
+            st.text_area(label="FB text", value=st.session_state.fb_content, height=180, label_visibility="collapsed")
             
-            # Kiran sabon maballin Copy na JavaScript
             render_js_copy_button(st.session_state.fb_content, "📋 Copy Facebook Content")
             st.download_button("📥 Download File", data=st.session_state.fb_content, file_name="facebook_post.txt", mime="text/plain", key="btn_dl_fb", use_container_width=True)
             
         with tab_ig:
             st.subheader("Instagram Caption")
-            st.text_area(label="IG text", value=st.session_state.ig_content, height=180, key="ig_text_area", label_visibility="collapsed")
+            # AN Cire 'key' a nan domin tsarin ya daina kullewa akan tsohon rubutu!
+            st.text_area(label="IG text", value=st.session_state.ig_content, height=180, label_visibility="collapsed")
             
             render_js_copy_button(st.session_state.ig_content, "📋 Copy Instagram Content")
             st.download_button("📥 Download File", data=st.session_state.ig_content, file_name="instagram_caption.txt", mime="text/plain", key="btn_dl_ig", use_container_width=True)
             
         with tab_x:
             st.subheader("X (Twitter) Post")
-            st.text_area(label="X text", value=st.session_state.x_content, height=120, key="x_text_area", label_visibility="collapsed")
+            # AN Cire 'key' a nan domin tsarin ya daina kullewa akan tsohon rubutu!
+            st.text_area(label="X text", value=st.session_state.x_content, height=120, label_visibility="collapsed")
             
             render_js_copy_button(st.session_state.x_content, "📋 Copy X Content")
             st.download_button("📥 Download File", data=st.session_state.x_content, file_name="x_post.txt", mime="text/plain", key="btn_dl_x", use_container_width=True)
             
         with tab_tiktok:
             st.subheader("TikTok Video Script")
-            st.text_area(label="TikTok text", value=st.session_state.tiktok_content, height=180, key="tk_text_area", label_visibility="collapsed")
+            # AN Cire 'key' a nan domin tsarin ya daina kullewa akan tsohon rubutu!
+            st.text_area(label="TikTok text", value=st.session_state.tiktok_content, height=180, label_visibility="collapsed")
             
             render_js_copy_button(st.session_state.tiktok_content, "📋 Copy TikTok Script")
             st.download_button("📥 Download Script", data=st.session_state.tiktok_content, file_name="tiktok_script.txt", mime="text/plain", key="btn_dl_tiktok", use_container_width=True)
